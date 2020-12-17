@@ -1,0 +1,83 @@
+Sub Stock_Analysis():
+
+'Define Variables
+Dim ticker As String
+Dim Summary_Table_Row As Integer
+Dim TickOpen As Double
+Dim TickClose As Double
+Dim yearly_change As Double
+Dim percent_change As Double
+Dim vol As Double
+
+
+'set header
+Cells(1, 9).Value = "Ticker"
+Cells(1, 10).Value = "Yearly Change"
+Cells(1, 11).Value = "Percent Change"
+Cells(1, 12).Value = "Total Stock Volume"
+
+'setup Summary Table
+Summary_Table_Row = 2
+
+'loop
+    For i = 2 To UsedRange.Rows.Count
+         
+        'if statement for last ticker date
+        If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+        
+        TickClose = Cells(i, 6).Value
+        ticker = Cells(i, 1).Value
+        yearly_change = TickClose - TickOpen
+        percent_change = (TickClose - TickOpen) / TickClose
+        vol = vol + Cells(i, 7).Value
+  
+        'Insert Tickers into Ticker Column
+        Cells(Summary_Table_Row, 9).Value = ticker
+        Cells(Summary_Table_Row, 10).Value = yearly_change
+        Cells(Summary_Table_Row, 11).Value = percent_change
+        Cells(Summary_Table_Row, 12).Value = vol
+        
+        Summary_Table_Row = Summary_Table_Row + 1
+        
+         vol = 0
+     
+       
+       'capture TickOpen
+        ElseIf (Cells(i, 2).Value = "20160101") Then
+    
+        TickOpen = Cells(i, 3).Value
+        vol = vol + Cells(i, 7).Value
+        
+        Else
+        
+        vol = vol + Cells(i, 7).Value
+        
+        End If
+        
+    Next i
+    
+
+'Column Formatting
+
+Columns("K").NumberFormat = "0.00%"
+Columns("I:L").AutoFit
+
+'Conditional Formatting on Yearly Change
+For i = 2 To UsedRange.Rows.Count
+
+    If Cells(i, 10).Value >= 0 Then
+    Cells(i, 10).Interior.ColorIndex = 4
+    
+    ElseIf Cells(i, 10).Value = "" Then
+    Cells(i, 10).Interior.ColorIndex = 0
+    
+    Else
+    
+    Cells(i, 10).Interior.ColorIndex = 3
+    
+    End If
+    
+Next i
+
+    
+End Sub
